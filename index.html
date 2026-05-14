@@ -5,136 +5,500 @@
 <title>Журнал расходов стройки</title>
 
 <style>
-body {
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  font-size: 13px;
+:root {
+  --bg: #f4f7fc;
+  --card: #ffffff;
+  --text: #1a2340;
+  --muted: #5f6b85;
+  --line: #e5e7eb;
+  --line-strong: #d1d5db;
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --primary-soft: #dbeafe;
+  --danger: #eb7575;
+  --danger-hover: #dd7272;
+  --neutral: #5f708f;
+  --neutral-hover: #4f607e;
+  --shadow: 0 18px 45px rgba(166, 176, 200, 0.08);
 }
 
 * {
+  box-sizing: border-box;
   font-family: inherit;
 }
 
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  color: var(--text);
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34rem),
+    linear-gradient(180deg, #ffffff 0%, var(--bg) 36rem);
+}
+
 .container {
-  max-width: 1250px;
-  margin: auto;
-  padding: 12px;
+  width: min(100% - 32px, 1280px);
+  margin: 0 auto;
+  padding: 28px 0 36px;
+}
+
+h2 {
+  margin: 0 0 18px;
+  color: #0f172a;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+}
+
+h3 {
+  color: #0f172a;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .card {
-  background: white;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  padding: 18px;
+  overflow-x: auto;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
 }
 
-input, select {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #475569;
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  color: var(--text);
+  font-size: 13px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  outline: none;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+input:hover,
+select:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+}
+
+input:focus,
+select:focus {
+  background: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 button {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 11px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
   white-space: nowrap;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
 }
 
 .btn {
-  background: #2563eb;
-  color: white;
+  color: #ffffff;
+  background: #1d4ed8;
+  box-shadow: 0 10px 20px rgba(29, 78, 216, 0.24);
+}
+
+.btn:hover:not(:disabled) {
+  background: #1e40af;
+  box-shadow: 0 12px 24px rgba(29, 78, 216, 0.30);
 }
 
 .btn-danger {
-  background: #ef4444;
-  color: white;
+  min-height: 34px;
+  padding: 7px 10px;
+  color: #ffffff;
+  background: var(--danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-hover);
 }
 
 .btn-small-muted {
-  background: #9ca3af;
-  color: white;
-  padding: 4px 8px;
+  min-height: 32px;
+  padding: 6px 9px;
+  color: #ffffff;
   font-size: 12px;
-  border-radius: 6px;
+  border-radius: 9px;
+  background: var(--neutral);
+}
+
+.btn-small-muted:hover:not(:disabled) {
+  background: var(--neutral-hover);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr auto;
-  gap: 8px;
+  grid-template-columns: repeat(6, minmax(135px, 1fr)) auto;
+  gap: 12px;
   align-items: end;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: auto;
+  max-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
 }
 
-th, td {
-  padding: 6px;
-  border-bottom: 1px solid #ddd;
-  font-size: 12px;
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;
+}
+
+th,
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  text-align: left;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+}
+
+th {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+th:nth-child(1),
+td:nth-child(1):not([colspan]) {
+  width: 104px;
   white-space: nowrap;
 }
 
+th:nth-child(2),
+td:nth-child(2):not([colspan]) {
+  width: 150px;
+}
+
+th:nth-child(3),
+td:nth-child(3):not([colspan]) {
+  width: 125px;
+  white-space: nowrap;
+}
+
+th:nth-child(5),
+td:nth-child(5):not([colspan]) {
+  width: 130px;
+}
+
+th:nth-child(6),
+td:nth-child(6):not([colspan]) {
+  width: 245px;
+  max-width: 245px;
+  white-space: nowrap;
+}
+
+td:nth-child(6):not([colspan]) {
+  padding: 6px 8px;
+  overflow: hidden;
+}
+
+td:nth-child(6):not([colspan]) button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  margin: 0 3px 0 0;
+  padding: 4px 7px;
+  font-size: 0;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+  box-shadow: none;
+}
+
+td:nth-child(6):not([colspan]) button::after {
+  font-size: 11px;
+  line-height: 1;
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(1) {
+  width: 54px;
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(1)::after {
+  content: "Катег.";
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(2) {
+  width: 52px;
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(2)::after {
+  content: "Сумма";
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(3) {
+  width: 70px;
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(3)::after {
+  content: "Коммент.";
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(4) {
+  width: 28px;
+  margin-right: 0;
+}
+
+td:nth-child(6):not([colspan]) button:nth-child(4)::after {
+  content: "×";
+  font-size: 15px;
+  line-height: 0.8;
+}
+
+tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-row):hover td {
+  background: #fbfdff;
+}
+
 .summary {
-  font-size: 14px;
-  font-weight: bold;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 12px 14px;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 800;
+  background: #e8f0ff;
+  border: 1px solid #93c5fd;
+  border-radius: 14px;
+}
+
+.summary span {
+  color: #0b4fd8;
+  font-size: 20px;
+  font-weight: 900;
 }
 
 .category-summary {
-  margin-top: 12px;
-  padding-left: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
 }
 
 .category-summary li {
-  margin-bottom: 6px;
+  margin: 0;
+  padding: 12px 13px;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 14px;
 }
 
 .actions-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 
 .muted {
-  color: #6b7280;
-  font-size: 11px;
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .category-summary li .share {
-  display: inline-block;
-  min-width: 56px;
-  font-weight: bold;
-  color: #1f2937;
-  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  margin-right: 8px;
+  padding: 3px 8px;
+  color: #0f3fbd;
+  font-weight: 800;
+  background: #c7ddff;
+  border: 1px solid #93b7ff;
+  border-radius: 999px;
 }
 
 .category-group-header td {
-  background: #eef2f7;
-  font-weight: bold;
-  color: #1f2937;
-  padding: 8px 6px;
+  padding: 9px 10px;
+  color: #0f172a;
+  font-weight: 800;
+  background: #eef2ff;
+  border-top: 1px solid #c7d2fe;
+  border-bottom: 1px solid #c7d2fe;
 }
 
 .category-subtotal td {
-  background: #f9fafb;
-  font-weight: bold;
-  border-top: 1px solid #d1d5db;
+  color: #0f172a;
+  font-weight: 800;
+  background: #f8fafc;
+  border-top: 1px solid var(--line-strong);
 }
 
 .grand-total-row td {
-  background: #e0e7ff;
-  font-weight: bold;
-  font-size: 13px;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 900;
+  background: #dbeafe;
+  border-top: 2px solid #93c5fd;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .grid > button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .container {
+    width: min(100% - 20px, 1280px);
+    padding: 18px 0 28px;
+  }
+
+  .card {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .grid > div,
+  .grid > button {
+    grid-column: 1 / -1 !important;
+  }
+
+  .actions-row {
+    flex-direction: column;
+  }
+
+  .actions-row .btn {
+    width: 100%;
+  }
+
+  .summary {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .category-summary {
+    grid-template-columns: 1fr;
+  }
+
+  th,
+  td {
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+
+  th:nth-child(1),
+  td:nth-child(1):not([colspan]) {
+    width: 86px;
+  }
+
+  th:nth-child(2),
+  td:nth-child(2):not([colspan]) {
+    width: 112px;
+  }
+
+  th:nth-child(3),
+  td:nth-child(3):not([colspan]) {
+    width: 104px;
+  }
+
+  th:nth-child(5),
+  td:nth-child(5):not([colspan]) {
+    width: 96px;
+  }
+
+  th:nth-child(6),
+  td:nth-child(6):not([colspan]) {
+    width: 210px;
+    max-width: 210px;
+  }
+
+  td:nth-child(6):not([colspan]) button {
+    min-height: 24px;
+    margin-right: 2px;
+    padding: 3px 5px;
+  }
+
+  td:nth-child(6):not([colspan]) button:nth-child(1) {
+    width: 48px;
+  }
+
+  td:nth-child(6):not([colspan]) button:nth-child(2) {
+    width: 48px;
+  }
+
+  td:nth-child(6):not([colspan]) button:nth-child(3) {
+    width: 64px;
+  }
+
+  td:nth-child(6):not([colspan]) button:nth-child(4) {
+    width: 24px;
+  }
 }
 </style>
 </head>
