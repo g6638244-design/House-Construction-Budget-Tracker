@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Журнал расходов стройки</title>
+
+<style>
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  font-size: 13px;
+}
+
+* {
+  font-family: inherit;
+}
+
+.container {
+  max-width: 1250px;
+  margin: auto;
+  padding: 12px;
+}
+
+.card {
+  background: white;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+input, select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  font-size: 12px;
+}
+
+button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-small-muted {
+  background: #9ca3af;
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+th, td {
+  padding: 6px;
+  border-bottom: 1px solid #ddd;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.summary {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.category-summary {
+  margin-top: 12px;
+  padding-left: 20px;
+}
+
+.category-summary li {
+  margin-bottom: 6px;
+}
+
+.actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.muted {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.category-summary li .share {
+  display: inline-block;
+  min-width: 56px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-right: 6px;
+}
+
+.category-group-header td {
+  background: #eef2f7;
+  font-weight: bold;
+  color: #1f2937;
+  padding: 8px 6px;
+}
+
+.category-subtotal td {
+  background: #f9fafb;
+  font-weight: bold;
+  border-top: 1px solid #d1d5db;
+}
+
+.grand-total-row td {
+  background: #e0e7ff;
+  font-weight: bold;
+  font-size: 13px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Журнал расходов стройки</h2>
+
+<div class="card">
+  <div class="grid">
+
+    <div>
+      <label>Дата</label>
+      <input type="date" id="date">
+    </div>
+
+    <div>
+      <label>Категория</label>
+      <select id="category">
+        <option>Фундамент</option>
+        <option>Коробка</option>
+        <option>Кровля</option>
+        <option>Окна</option>
+        <option>Инженерия</option>
+        <option>Отделка</option>
+        <option>Участок</option>
+        <option>Прочее</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Сумма</label>
+      <input type="number" id="amount" step="0.01" min="0.01">
+    </div>
+
+    <div>
+      <label>Комментарий</label>
+      <input type="text" id="comment" placeholder="что оплатили">
+    </div>
+
+    <div>
+      <label>Кому</label>
+      <input type="text" id="who" placeholder="подрядчик / магазин">
+    </div>
+
+    <div>
+      <label>Подкатегория</label>
+      <input type="text" id="subcategory" placeholder="например прочие расходы">
+    </div>
+
+    <button class="btn" onclick="add()">Добавить</button>
+
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">Договор по виду работ</h3>
+  <div class="grid">
+    <div>
+      <label>Категория</label>
+      <select id="contract-category" onchange="fillContractForm()">
+        <option>Фундамент</option>
+        <option>Коробка</option>
+        <option>Кровля</option>
+        <option>Окна</option>
+        <option>Инженерия</option>
+        <option>Отделка</option>
+        <option>Участок</option>
+        <option>Прочее</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Сумма по договору</label>
+      <input type="number" id="contract-total" step="0.01" min="0.01" placeholder="например 500000.00">
+    </div>
+
+    <div>
+      <label>Срок оплаты до</label>
+      <input type="date" id="contract-deadline">
+    </div>
+
+    <div style="grid-column: span 2;">
+      <label>Комментарий к договору</label>
+      <input type="text" id="contract-note" placeholder="условия, этап, примечание">
+    </div>
+
+    <button class="btn" onclick="saveContract()">Сохранить договор</button>
+  </div>
+  <div class="muted" style="margin-top:10px;">После внесения оплат по категории автоматически считается остаток по договору.</div>
+</div>
+
+<div class="card">
+  <div class="summary">Итого стройка: <span id="total">0 ₽</span></div>
+  <ul id="category-summary" class="category-summary"></ul>
+  <div class="actions-row">
+    <button class="btn" id="download-backup-btn" onclick="downloadBackup()">Скачать резервную копию</button>
+    <button class="btn" onclick="openRestoreDialog()">Восстановить из копии</button>
+    <input type="file" id="backup-file-input" accept="application/json,.json" style="display:none" onchange="handleBackupFile(event)">
+  </div>
+</div>
+
+<div class="card">
+
+<table>
+  <thead>
+    <tr>
+      <th>Дата</th>
+      <th>Категория</th>
+      <th>Сумма</th>
+      <th>Комментарий</th>
+      <th>Кому</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+
+  <tbody id="table"></tbody>
+</table>
+
+</div>
+
+</div>
+
+<script>
+let data = [];
+let contracts = {};
+
+const CATEGORIES = [
+  "Фундамент",
+  "Коробка",
+  "Кровля",
+  "Окна",
+  "Инженерия",
+  "Отделка",
+  "Участок",
+  "Прочее"
+];
+
+function save() {
+  localStorage.setItem("build_costs", JSON.stringify(data));
+}
+
+function saveContracts() {
+  localStorage.setItem("build_contracts", JSON.stringify(contracts));
+}
+
+function load() {
+  const saved = localStorage.getItem("build_costs");
+  if (saved) data = JSON.parse(saved);
+
+  const savedContracts = localStorage.getItem("build_contracts");
+  if (savedContracts) {
+    try {
+      const parsed = JSON.parse(savedContracts);
+      contracts = parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      contracts = {};
+    }
+  }
+}
+
+function format(n) {
+  return new Intl.NumberFormat("ru-RU", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(n) + " ₽";
+}
+
+function parseMoney(value) {
+  return Number(String(value).replace(",", "."));
+}
+
+function buildBackupPayload() {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    source: "build_costs",
+    items: data,
+    contracts
+  };
+}
+
+function getBackupFilename() {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const hh = String(now.getHours()).padStart(2, "0");
+  const min = String(now.getMinutes()).padStart(2, "0");
+  return `build-costs-backup-${yyyy}-${mm}-${dd}_${hh}-${min}.json`;
+}
+
+function updateBackupButtonState() {
+  const backupBtn = document.getElementById("download-backup-btn");
+  if (!backupBtn) return;
+  backupBtn.disabled = data.length === 0;
+  backupBtn.title = data.length === 0 ? "Нет данных для выгрузки" : "Скачать JSON-файл с резервной копией";
+}
+
+function downloadBackup() {
+  if (data.length === 0) {
+    alert("Нет данных для резервного копирования");
+    return;
+  }
+
+  const payload = buildBackupPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = getBackupFilename();
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function openRestoreDialog() {
+  const fileInput = document.getElementById("backup-file-input");
+  if (!fileInput) return;
+  fileInput.value = "";
+  fileInput.click();
+}
+
+function normalizeRestoredItem(item, index) {
+  const amount = Number(item.amount);
+  if (!item || typeof item !== "object") return null;
+  if (typeof item.date !== "string" || !item.date) return null;
+  if (typeof item.category !== "string" || !item.category) return null;
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+
+  return {
+    id: Number.isFinite(Number(item.id)) ? Number(item.id) : Date.now() + index,
+    date: item.date,
+    category: item.category,
+    subcategory: typeof item.subcategory === "string" ? item.subcategory : "",
+    amount,
+    comment: typeof item.comment === "string" ? item.comment : "",
+    who: typeof item.who === "string" ? item.who : ""
+  };
+}
+
+function parseBackupContent(text) {
+  const parsed = JSON.parse(text);
+  const rawItems = Array.isArray(parsed) ? parsed : parsed?.items;
+  const restoredContractsRaw = !Array.isArray(parsed) ? parsed?.contracts : undefined;
+
+  if (!Array.isArray(rawItems)) {
+    throw new Error("Файл не содержит список расходов");
+  }
+
+  const restoredItems = rawItems
+    .map((item, index) => normalizeRestoredItem(item, index))
+    .filter(Boolean);
+
+  if (restoredItems.length === 0 && rawItems.length > 0) {
+    throw new Error("В файле нет корректных записей для восстановления");
+  }
+
+  let restoredContracts = {};
+  if (restoredContractsRaw && typeof restoredContractsRaw === "object") {
+    Object.entries(restoredContractsRaw).forEach(([category, value]) => {
+      if (!CATEGORIES.includes(category)) return;
+      if (!value || typeof value !== "object") return;
+      const total = Number(value.total);
+      if (!Number.isFinite(total) || total <= 0) return;
+      if (typeof value.deadline !== "string" || !value.deadline) return;
+
+      restoredContracts[category] = {
+        total,
+        deadline: value.deadline,
+        note: typeof value.note === "string" ? value.note : ""
+      };
+    });
+  }
+
+  return { restoredItems, restoredContracts };
+}
+
+function handleBackupFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const text = String(reader.result || "");
+      const parsed = parseBackupContent(text);
+      const shouldReplace = confirm(`Найдено записей: ${parsed.restoredItems.length}. Заменить текущие данные?`);
+      if (!shouldReplace) return;
+
+      data = parsed.restoredItems;
+      contracts = parsed.restoredContracts;
+      save();
+      saveContracts();
+      fillContractForm();
+      render();
+      alert("Данные успешно восстановлены");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Не удалось прочитать файл";
+      alert(`Ошибка восстановления: ${message}`);
+    }
+  };
+  reader.onerror = () => {
+    alert("Ошибка чтения файла");
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+function add() {
+  const amount = parseMoney(document.getElementById("amount").value);
+  const item = {
+    id: Date.now(),
+    date: document.getElementById("date").value,
+    category: document.getElementById("category").value,
+    subcategory: document.getElementById("subcategory").value.trim(),
+    amount,
+    comment: document.getElementById("comment").value,
+    who: document.getElementById("who").value
+  };
+
+  if (!item.date || !item.amount) {
+    alert("Заполни дату и сумму");
+    return;
+  }
+
+  data.push(item);
+
+  document.getElementById("amount").value = "";
+  document.getElementById("comment").value = "";
+  document.getElementById("who").value = "";
+  document.getElementById("subcategory").value = "";
+
+  render();
+  save();
+}
+
+function remove(id) {
+  data = data.filter(x => x.id !== id);
+  render();
+  save();
+}
+
+function saveContract() {
+  const category = document.getElementById("contract-category").value;
+  const totalInput = document.getElementById("contract-total").value;
+  const deadline = document.getElementById("contract-deadline").value;
+  const note = document.getElementById("contract-note").value.trim();
+  const total = parseMoney(totalInput);
+
+  if (!Number.isFinite(total) || total <= 0) {
+    alert("Введите корректную сумму договора больше 0");
+    return;
+  }
+
+  if (!deadline) {
+    alert("Укажите срок оплаты");
+    return;
+  }
+
+  contracts[category] = {
+    total,
+    deadline,
+    note
+  };
+
+  saveContracts();
+  fillContractForm();
+  render();
+}
+
+function fillContractForm() {
+  const category = document.getElementById("contract-category").value;
+  const contract = contracts[category];
+
+  document.getElementById("contract-total").value = contract ? contract.total : "";
+  document.getElementById("contract-deadline").value = contract ? contract.deadline : "";
+  document.getElementById("contract-note").value = contract ? (contract.note || "") : "";
+}
+
+function editAmount(id) {
+  const item = data.find(x => x.id === id);
+  if (!item) return;
+
+  const input = prompt("Введите новую сумму:", item.amount);
+  if (input === null) return;
+
+  const newAmount = parseMoney(input);
+  if (!Number.isFinite(newAmount) || newAmount <= 0) {
+    alert("Введите корректную сумму больше 0");
+    return;
+  }
+
+  item.amount = newAmount;
+  render();
+  save();
+}
+
+function editComment(id) {
+  const item = data.find(x => x.id === id);
+  if (!item) return;
+
+  const input = prompt("Измените комментарий:", item.comment || "");
+  if (input === null) return;
+
+  item.comment = input.trim();
+  render();
+  save();
+}
+
+function editCategory(id) {
+  const item = data.find(x => x.id === id);
+  if (!item) return;
+
+  const categoryInput = prompt(
+    `Измените основную категорию.\nДоступно: ${CATEGORIES.join(", ")}`,
+    item.category
+  );
+  if (categoryInput === null) return;
+
+  const newCategory = categoryInput.trim();
+  if (!CATEGORIES.includes(newCategory)) {
+    alert("Такой категории нет в списке. Используйте одну из доступных категорий.");
+    return;
+  }
+
+  const subInput = prompt("Измените подкатегорию (можно оставить пусто):", item.subcategory || "");
+  if (subInput === null) return;
+
+  item.category = newCategory;
+  item.subcategory = subInput.trim();
+  render();
+  save();
+}
+
+function getCategoryLabel(item) {
+  if (!item.subcategory) return item.category;
+  return `${item.category} / ${item.subcategory}`;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "не указан";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("ru-RU");
+}
+
+function render() {
+  const table = document.getElementById("table");
+  const categorySummary = document.getElementById("category-summary");
+  table.innerHTML = "";
+  categorySummary.innerHTML = "";
+
+  let total = 0;
+  const categoryAllPaid = {};
+  const categoryContractPaid = {};
+  const itemsByCategory = {};
+
+  data.forEach(x => {
+    total += x.amount;
+    const hasSubcategory = Boolean((x.subcategory || "").trim());
+
+    categoryAllPaid[x.category] = (categoryAllPaid[x.category] || 0) + x.amount;
+    if (!hasSubcategory) {
+      categoryContractPaid[x.category] = (categoryContractPaid[x.category] || 0) + x.amount;
+    }
+
+    if (!itemsByCategory[x.category]) itemsByCategory[x.category] = [];
+    itemsByCategory[x.category].push(x);
+  });
+
+  const presentCategories = CATEGORIES.filter(
+    cat => (itemsByCategory[cat] && itemsByCategory[cat].length > 0) || contracts[cat]
+  );
+
+  presentCategories.forEach(category => {
+    const items = (itemsByCategory[category] || []).slice().sort((a, b) => {
+      const dateDiff = new Date(a.date) - new Date(b.date);
+      if (dateDiff !== 0) return dateDiff;
+      return a.id - b.id;
+    });
+
+    const categoryTotal = categoryAllPaid[category] || 0;
+    const percent = total ? ((categoryTotal / total) * 100).toFixed(1) : "0.0";
+
+    table.innerHTML += `
+      <tr class="category-group-header">
+        <td colspan="6">${category} &mdash; (${percent}%)</td>
+      </tr>
+    `;
+
+    if (items.length === 0) {
+      table.innerHTML += `
+        <tr>
+          <td colspan="6" class="muted">Расходов пока нет, но есть договор по этой категории</td>
+        </tr>
+      `;
+    } else {
+      items.forEach(x => {
+        table.innerHTML += `
+          <tr>
+            <td>${formatDate(x.date)}</td>
+            <td>${getCategoryLabel(x)}</td>
+            <td>${format(x.amount)}</td>
+            <td>${x.comment || ""}</td>
+            <td>${x.who || ""}</td>
+            <td>
+              <button class="btn-small-muted" onclick="editCategory(${x.id})">Изм. катег.</button>
+              <button class="btn-small-muted" onclick="editAmount(${x.id})">Изм. сумму</button>
+              <button class="btn-small-muted" onclick="editComment(${x.id})">Изм. коммент.</button>
+              <button class="btn-danger" onclick="remove(${x.id})">X</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    table.innerHTML += `
+      <tr class="category-subtotal">
+        <td colspan="2">Итого по категории «${category}»</td>
+        <td>${format(categoryTotal)}</td>
+        <td colspan="3" class="muted">доля в общей сумме: ${percent}%</td>
+      </tr>
+    `;
+  });
+
+  if (presentCategories.length > 0) {
+    table.innerHTML += `
+      <tr class="grand-total-row">
+        <td colspan="2">Итого стройка</td>
+        <td>${format(total)}</td>
+        <td colspan="3">100.0%</td>
+      </tr>
+    `;
+  }
+
+  document.getElementById("total").innerText = format(total);
+
+  presentCategories.forEach(category => {
+    const allPaid = categoryAllPaid[category] || 0;
+    const contractPaid = categoryContractPaid[category] || 0;
+    const contract = contracts[category];
+    const percent = total ? ((allPaid / total) * 100).toFixed(1) : "0.0";
+
+    if (contract) {
+      const remaining = Math.max(contract.total - contractPaid, 0);
+      const extras = allPaid - contractPaid;
+      const extraText = extras > 0 ? `, доп. расходы вне договора: ${format(extras)}` : "";
+      categorySummary.innerHTML += `
+        <li>
+          <span class="share">(${percent}%)</span>${category}: оплачено ${format(contractPaid)} из ${format(contract.total)}, остаток ${format(remaining)}${extraText}, срок до ${formatDate(contract.deadline)}${contract.note ? `, примечание: ${contract.note}` : ""}
+        </li>
+      `;
+      return;
+    }
+
+    categorySummary.innerHTML += `
+      <li><span class="share">(${percent}%)</span>${category}: ${format(allPaid)}</li>
+    `;
+  });
+
+  updateBackupButtonState();
+}
+
+load();
+fillContractForm();
+render();
+</script>
+
+</body>
+</html>
