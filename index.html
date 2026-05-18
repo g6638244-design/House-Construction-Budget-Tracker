@@ -2,24 +2,31 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Журнал расходов стройки</title>
+<title>Журнал расходов стройки — бюджет дома</title>
 
 <style>
 :root {
-  --bg: #f4f7fc;
+  --bg: #f2f4f0;
   --card: #ffffff;
-  --text: #1a2340;
-  --muted: #5f6b85;
-  --line: #e5e7eb;
-  --line-strong: #d1d5db;
-  --primary: #1d4ed8;
-  --primary-hover: #1e40af;
-  --primary-soft: #dbeafe;
-  --danger: #eb7575;
-  --danger-hover: #dd7272;
+  --text: #1e2933;
+  --muted: #5c6b78;
+  --line: #e2e8e4;
+  --line-strong: #cbd5d0;
+  --primary: #3d6b5a;
+  --primary-hover: #2f5749;
+  --primary-soft: #e4efe9;
+  --accent: #8b7355;
+  --accent-soft: #f3ebe0;
+  --danger: #c96a6a;
+  --danger-hover: #b85a5a;
   --neutral: #5f708f;
   --neutral-hover: #4f607e;
-  --shadow: 0 18px 45px rgba(166, 176, 200, 0.08);
+  --shadow: 0 12px 32px rgba(45, 62, 52, 0.07);
+  --shadow-sm: 0 4px 14px rgba(45, 62, 52, 0.05);
+  --radius: 16px;
+  --radius-sm: 11px;
+  --transition: 0.2s ease;
+  --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Tahoma, Arial, sans-serif;
 }
 
 * {
@@ -36,45 +43,269 @@ body {
   min-height: 100%;
   margin: 0;
   color: var(--text);
-  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  font-family: var(--font);
   font-size: 14px;
-  line-height: 1.45;
+  line-height: 1.5;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34rem),
-    linear-gradient(180deg, #ffffff 0%, var(--bg) 36rem);
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgba(61, 107, 90, 0.08), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 0% 0%, rgba(139, 115, 85, 0.06), transparent 45%),
+    linear-gradient(180deg, #fafbf9 0%, var(--bg) 28rem);
 }
 
 .container {
   width: min(100% - 32px, 1280px);
   margin: 0 auto;
-  padding: 28px 0 36px;
+  padding: 24px 0 40px;
 }
 
-h2 {
-  margin: 0 0 18px;
-  color: #0f172a;
-  font-size: clamp(24px, 3vw, 34px);
-  font-weight: 750;
-  letter-spacing: -0.03em;
+h2, h3 {
+  margin: 0;
+  color: #152028;
+  letter-spacing: -0.02em;
 }
 
 h3 {
-  color: #0f172a;
   font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+}
+
+.section-title {
+  margin: 0 0 14px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #152028;
 }
 
 .card {
   margin-bottom: 16px;
-  padding: 18px;
+  padding: 20px;
   overflow-x: auto;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(226, 232, 240, 0.95);
-  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
+  animation: cardFadeIn 0.55s ease backwards;
+}
+
+.card:nth-of-type(1) { animation-delay: 0.04s; }
+.card:nth-of-type(2) { animation-delay: 0.08s; }
+.card:nth-of-type(3) { animation-delay: 0.12s; }
+.card:nth-of-type(4) { animation-delay: 0.16s; }
+.card:nth-of-type(5) { animation-delay: 0.2s; }
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  gap: 28px;
+  align-items: stretch;
+  margin-bottom: 20px;
+  padding: 28px 28px 26px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7faf8 55%, var(--primary-soft) 100%);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 4px);
+  box-shadow: var(--shadow);
+  animation: cardFadeIn 0.6s ease backwards;
+}
+
+.hero-eyebrow {
+  margin: 0 0 8px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 0 0 12px;
+  color: #0f1a14;
+  font-size: clamp(26px, 4vw, 36px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.hero-desc {
+  margin: 0;
+  max-width: 38em;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.hero-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  min-height: 0;
+  height: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-preview {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  min-height: clamp(200px, 22vw, 380px);
+  max-height: min(400px, 46vh);
+  padding: 4px 6px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 95% 70% at 50% 100%, rgba(61, 107, 90, 0.14), transparent 62%),
+    linear-gradient(165deg, #d9e6df 0%, #ecf3ef 42%, #f3f0e8 100%);
+  border: 1px solid rgba(168, 201, 184, 0.6);
+  border-radius: var(--radius);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 12px 32px rgba(45, 62, 52, 0.09);
+  isolation: isolate;
+}
+
+.hero-preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 28%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(61, 107, 90, 0.03) 0,
+      rgba(61, 107, 90, 0.03) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  pointer-events: none;
+}
+
+.hero-preview::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(61, 107, 90, 0.22), transparent);
+  pointer-events: none;
+}
+
+.hero-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 10px 20px rgba(45, 62, 52, 0.14));
+}
+
+.hero-preview-caption {
+  margin: 0;
+  padding: 0 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.stage-card {
+  padding: 20px 22px;
+}
+
+.stage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px;
+  margin: 0;
+}
+
+.stage-item {
+  margin: 0;
+  padding: 14px 16px;
+  background: #f8faf9;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.stage-item:hover {
+  border-color: #c5d4cc;
+  box-shadow: var(--shadow-sm);
+}
+
+.stage-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.stage-value {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.stage-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  color: #5a4a1a;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f5ecd4;
+  border-radius: 999px;
+}
+
+.stage-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  background: #c9a227;
+  border-radius: 50%;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
 }
 
 label {
@@ -114,7 +345,7 @@ input:focus,
 select:focus {
   background: #ffffff;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 4px rgba(61, 107, 90, 0.14);
 }
 
 button {
@@ -126,7 +357,7 @@ button {
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), opacity var(--transition);
 }
 
 button:hover:not(:disabled) {
@@ -144,13 +375,13 @@ button:disabled {
 
 .btn {
   color: #ffffff;
-  background: #1d4ed8;
-  box-shadow: 0 10px 20px rgba(29, 78, 216, 0.24);
+  background: var(--primary);
+  box-shadow: 0 8px 18px rgba(61, 107, 90, 0.22);
 }
 
 .btn:hover:not(:disabled) {
-  background: #1e40af;
-  box-shadow: 0 12px 24px rgba(29, 78, 216, 0.30);
+  background: var(--primary-hover);
+  box-shadow: 0 10px 22px rgba(47, 87, 73, 0.28);
 }
 
 .btn-danger {
@@ -313,19 +544,21 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 
 .summary {
   display: inline-flex;
+  margin-bottom: 4px;
   align-items: baseline;
+  flex-wrap: wrap;
   gap: 8px;
-  padding: 12px 14px;
-  color: #0f172a;
+  padding: 14px 18px;
+  color: #152028;
   font-size: 15px;
   font-weight: 800;
-  background: #e8f0ff;
-  border: 1px solid #93c5fd;
-  border-radius: 14px;
+  background: var(--primary-soft);
+  border: 1px solid #b8d4c8;
+  border-radius: var(--radius-sm);
 }
 
 .summary span {
-  color: #0b4fd8;
+  color: var(--primary);
   font-size: 20px;
   font-weight: 900;
 }
@@ -367,20 +600,36 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
   min-width: 64px;
   margin-right: 8px;
   padding: 3px 8px;
-  color: #0f3fbd;
+  color: #2f5749;
   font-weight: 800;
-  background: #c7ddff;
-  border: 1px solid #93b7ff;
+  background: #d4e8de;
+  border: 1px solid #a8c9b8;
   border-radius: 999px;
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-wrap {
+  margin: 0 -4px;
+  padding: 2px 4px 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+}
+
+.table-wrap table {
+  min-width: 720px;
 }
 
 .category-group-header td {
   padding: 9px 10px;
-  color: #0f172a;
+  color: #152028;
   font-weight: 800;
-  background: #eef2ff;
-  border-top: 1px solid #c7d2fe;
-  border-bottom: 1px solid #c7d2fe;
+  background: var(--primary-soft);
+  border-top: 1px solid #b8d4c8;
+  border-bottom: 1px solid #b8d4c8;
 }
 
 .category-subtotal td {
@@ -391,14 +640,44 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 }
 
 .grand-total-row td {
-  color: #0f172a;
+  color: #152028;
   font-size: 14px;
   font-weight: 900;
-  background: #dbeafe;
-  border-top: 2px solid #93c5fd;
+  background: #dcebe4;
+  border-top: 2px solid #a8c9b8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .hero {
+    animation: none;
+  }
+
+  button:hover:not(:disabled) {
+    transform: none;
+  }
+
+  .stage-status::before {
+    animation: none;
+  }
 }
 
 @media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 22px;
+  }
+
+  .hero-visual {
+    order: -1;
+  }
+
+  .hero-preview {
+    min-height: clamp(200px, 42vw, 340px);
+    max-height: min(360px, 58vw);
+    padding: 4px 6px;
+  }
   .grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -411,12 +690,40 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 @media (max-width: 760px) {
   .container {
     width: min(100% - 20px, 1280px);
-    padding: 18px 0 28px;
+    padding: 16px 0 28px;
+  }
+
+  .hero {
+    padding: 18px;
+    border-radius: var(--radius);
+  }
+
+  .hero h1 {
+    font-size: 24px;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+  }
+
+  .hero-preview {
+    min-height: clamp(168px, 50vw, 280px);
+    max-height: min(300px, 68vw);
+    padding: 3px 5px;
+  }
+
+  .stage-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .stage-item {
+    padding: 12px 14px;
   }
 
   .card {
-    padding: 14px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: var(--radius);
   }
 
   .grid {
@@ -433,7 +740,8 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
     flex-direction: column;
   }
 
-  .actions-row .btn {
+  .actions-row .btn,
+  .grid > button.btn {
     width: 100%;
   }
 
@@ -499,6 +807,15 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
   td:nth-child(6):not([colspan]) button:nth-child(4) {
     width: 24px;
   }
+
+  .table-wrap {
+    margin: 0 -8px;
+    padding: 0 8px 6px;
+  }
+
+  .table-wrap table {
+    min-width: 640px;
+  }
 }
 </style>
 </head>
@@ -507,9 +824,52 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 
 <div class="container">
 
-<h2>Журнал расходов стройки</h2>
+<section class="hero" aria-label="О калькуляторе">
+  <div class="hero-text">
+    <p class="hero-eyebrow">Бюджет частного дома</p>
+    <h1>Журнал расходов стройки</h1>
+    <p class="hero-desc">Учитывайте оплаты по этапам строительства, ведите договоры с подрядчиками и контролируйте остатки по категориям — всё в одном спокойном интерфейсе без лишних отвлечений.</p>
+  </div>
+  <figure class="hero-visual">
+    <div class="hero-preview">
+      <img
+        class="hero-image"
+        src="hero-house.png"
+        alt="Архитектурный эскиз частного дома"
+        width="640"
+        height="320"
+        loading="lazy"
+        decoding="async"
+      >
+    </div>
+    <figcaption class="hero-preview-caption">Проект дома</figcaption>
+  </figure>
+</section>
+
+<section class="card stage-card" aria-labelledby="stage-heading">
+  <h3 class="section-title" id="stage-heading">Текущая стадия строительства</h3>
+  <div class="stage-grid">
+    <div class="stage-item">
+      <p class="stage-label">Текущий этап</p>
+      <p class="stage-value">Получение разрешения на строительство</p>
+    </div>
+    <div class="stage-item">
+      <p class="stage-label">Статус</p>
+      <p class="stage-value"><span class="stage-status">В процессе</span></p>
+    </div>
+    <div class="stage-item">
+      <p class="stage-label">Ближайшая цель</p>
+      <p class="stage-value">Завершить оформление разрешения на строительство</p>
+    </div>
+    <div class="stage-item">
+      <p class="stage-label">Плановая дата</p>
+      <p class="stage-value">до 31.07.2026</p>
+    </div>
+  </div>
+</section>
 
 <div class="card">
+  <h3 class="section-title">Новый расход</h3>
   <div class="grid">
 
     <div>
@@ -557,7 +917,7 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 </div>
 
 <div class="card">
-  <h3 style="margin-top:0">Договор по виду работ</h3>
+  <h3 class="section-title">Договор по виду работ</h3>
   <div class="grid">
     <div>
       <label>Категория</label>
@@ -594,6 +954,7 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
 </div>
 
 <div class="card">
+  <h3 class="section-title">Сводка по стройке</h3>
   <div class="summary">Итого стройка: <span id="total">0 ₽</span></div>
   <ul id="category-summary" class="category-summary"></ul>
   <div class="actions-row">
@@ -603,8 +964,9 @@ tbody tr:not(.category-group-header):not(.category-subtotal):not(.grand-total-ro
   </div>
 </div>
 
-<div class="card">
-
+<div class="card table-card">
+  <h3 class="section-title">Журнал операций</h3>
+  <div class="table-wrap">
 <table>
   <thead>
     <tr>
